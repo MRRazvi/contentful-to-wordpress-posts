@@ -1,5 +1,11 @@
 <?php
 
+// set php time limit
+set_time_limit(0);
+ini_set('max_input_time', -1);
+ini_set('max_execution_time', 0);
+
+// load composer autoload
 require_once __DIR__ . '/vendor/autoload.php';
 
 // load wordpress
