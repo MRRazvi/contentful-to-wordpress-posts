@@ -1,4 +1,5 @@
 # Contentful to WordPress Posts
+A wordpress script to get content from Contentful and add to WordPress Posts.
 
 ## Author
 Mubashir Rasool Razvi  

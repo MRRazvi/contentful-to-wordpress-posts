@@ -65,9 +65,10 @@ foreach($data['items'] as $item) {
     }
     
     // set post thumbnail
-    $thumnail = $assets[$item['fields'][$fields['post_thumbnail']]['sys']['id']];
+    $thumnail = $assets[$item['fields'][$fields['post_thumbnail']]['sys']['id']] ?? '';
     if (isset($thumnail) && !empty($thumnail)) {
         $image_id = media_sideload_image($thumnail, $post_id, $post_data['post_title']);
+
         if (!is_wp_error($image_id)) {
             set_post_thumbnail($post_id, $image_id);
         }
