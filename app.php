@@ -3,6 +3,7 @@
 require_once __DIR__ . '/vendor/autoload.php';
 
 // load wordpress
+define('WP_USE_THEMES', false);
 require_once __DIR__ . '/../wp-load.php';
 
 // load .env file
@@ -36,10 +37,12 @@ foreach($data['items'] as $item) {
     $post_data = [
         'post_type'     => 'post',
         'post_status'   => 'publish',
+        'post_date'     => $item['sys']['createdAt'],
+        'guid'          => $item['sys']['id'],
         'post_title'    => $item['fields'][$fields['post_title']],
-        'post_name'     => $item['fields'][$fields['post_name']],
-        'post_excerpt'  => $item['fields'][$fields['post_excerpt']],
-        'post_content'  => $item['fields'][$fields['post_content']],
+        'post_name'     => $item['fields'][$fields['post_name']] ?? '',
+        'post_excerpt'  => $item['fields'][$fields['post_excerpt']] ?? '',
+        'post_content'  => contentful_rich_text_to_html($item['fields'][$fields['post_content']]['content']),
     ];
 
     dd($post_data);
