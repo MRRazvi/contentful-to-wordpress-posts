@@ -5,6 +5,9 @@ require_once __DIR__ . '/vendor/autoload.php';
 // load wordpress
 define('WP_USE_THEMES', false);
 require_once __DIR__ . '/../wp-load.php';
+require_once __DIR__ . '/../wp-admin/includes/media.php';
+require_once __DIR__ . '/../wp-admin/includes/file.php';
+require_once __DIR__ . '/../wp-admin/includes/image.php';
 
 // load .env file
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
@@ -62,7 +65,7 @@ foreach($data['items'] as $item) {
     }
     
     // set post thumbnail
-    $thumnail = $assets[$item['fields'][$fields['post_thumbnail']]];
+    $thumnail = $assets[$item['fields'][$fields['post_thumbnail']]['sys']['id']];
     if (isset($thumnail) && !empty($thumnail)) {
         $image_id = media_sideload_image($thumnail, $post_id, $post_data['post_title']);
         if (!is_wp_error($image_id)) {
