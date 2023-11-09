@@ -32,8 +32,16 @@ $response = wp_remote_get(sprintf(
 $body = wp_remote_retrieve_body($response);
 $data = json_decode($body, true);
 
+// get all contentful assets urls
+$assets = contentful_get_assets_urls($data['includes']['Asset']);
+
 // loop through each item
 foreach($data['items'] as $item) {
+    // exist post slug
+    if (get_page_by_path($item['fields'][$fields['post_name']], OBJECT, 'post')) {
+        continue;
+    }
+    
     $post_data = [
         'post_type'     => 'post',
         'post_status'   => 'publish',
@@ -45,5 +53,22 @@ foreach($data['items'] as $item) {
         'post_content'  => contentful_rich_text_to_html($item['fields'][$fields['post_content']]['content']),
     ];
 
-    dd($post_data);
+    $post_id = wp_insert_post($post_data);
+
+    // set post tags
+    $tags = $item['fields'][$fields['post_tags']] ?? '';
+    if (isset($tags) && !empty($tags)) {
+        wp_set_post_tags($post_id, explode(',', $tags));
+    }
+    
+    // set post thumbnail
+    $thumnail = $assets[$item['fields'][$fields['post_thumbnail']]];
+    if (isset($thumnail) && !empty($thumnail)) {
+        $image_id = media_sideload_image($thumnail, $post_id, $post_data['post_title']);
+        if (!is_wp_error($image_id)) {
+            set_post_thumbnail($post_id, $image_id);
+        }
+    }
+
+    dd($post_id);
 }

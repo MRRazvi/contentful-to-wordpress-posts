@@ -70,3 +70,13 @@ function contentful_rich_text_to_html($contentArray) {
 
     return $html;
 }
+
+function contentful_get_assets_urls($assets) {
+    $data = [];
+
+    foreach($assets as $asset) {
+        $data[$asset['sys']['id']] = $asset['fields']['file']['url'] ?? '';
+    }
+
+    return $data;
+}
