@@ -31,7 +31,7 @@ require_once __DIR__ . '/helpers/functions.php';
 
 // get all the posts from contentful
 $response = wp_remote_get(sprintf(
-        'https://cdn.contentful.com/spaces/%s/entries?content_type=%s&limit=%s&query=Psychology Tricks for Communication',
+        'https://cdn.contentful.com/spaces/%s/entries?content_type=%s&limit=%s',
         $_ENV['CONTENTFUL_SPACE_ID'],
         $fields['post_type'],
         $page_size,
