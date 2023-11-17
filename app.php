@@ -1,5 +1,8 @@
 <?php
 
+use Contentful\Delivery\Query;
+use Contentful\RichText\Renderer;
+
 // set php time limit
 set_time_limit(0);
 ini_set('max_input_time', -1);
@@ -28,7 +31,7 @@ require_once __DIR__ . '/helpers/functions.php';
 
 // get all the posts from contentful
 $response = wp_remote_get(sprintf(
-        'https://cdn.contentful.com/spaces/%s/entries?content_type=%s&limit=%s',
+        'https://cdn.contentful.com/spaces/%s/entries?content_type=%s&limit=%s&query=Psychology Tricks for Communication',
         $_ENV['CONTENTFUL_SPACE_ID'],
         $fields['post_type'],
         $page_size,
@@ -44,12 +47,19 @@ $data = json_decode($body, true);
 // get all contentful assets urls
 $assets = contentful_get_assets_urls($data['includes']['Asset']);
 
+$renderer = new Renderer();
+
 // loop through each item
 foreach($data['items'] as $item) {
     // exist post slug
     if (get_page_by_path($item['fields'][$fields['post_name']], OBJECT, 'post')) {
         continue;
     }
+
+    $client = new \Contentful\Delivery\Client($_ENV['CONTENTFUL_ACCESS_TOKEN'], $_ENV['CONTENTFUL_SPACE_ID']);
+
+    $entry = $client->getEntry($item['sys']['id']);
+    $content = $entry->contentBlock1;
     
     $post_data = [
         'post_type'     => 'post',
@@ -59,7 +69,7 @@ foreach($data['items'] as $item) {
         'post_title'    => $item['fields'][$fields['post_title']],
         'post_name'     => $item['fields'][$fields['post_name']] ?? '',
         'post_excerpt'  => $item['fields'][$fields['post_excerpt']] ?? '',
-        'post_content'  => contentful_rich_text_to_html($item['fields'][$fields['post_content']]['content']),
+        'post_content'  => $renderer->render($content),
     ];
 
     $post_id = wp_insert_post($post_data);

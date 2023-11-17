@@ -1,7 +1,9 @@
 {
     "require": {
         "vlucas/phpdotenv": "^5.5",
-        "monolog/monolog": "^3.5"
+        "monolog/monolog": "^3.5",
+        "contentful/contentful": "^7.0",
+        "contentful/rich-text": "^4.0"
     },
     "require-dev": {
         "symfony/var-dumper": "^6.3"
